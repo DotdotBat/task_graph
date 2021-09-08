@@ -29,19 +29,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Board> boards = [mockBoard];
-  Board activeBoard = mockBoard; //temporary solution
+  List<Board> boards = [mockBoard];//temporary solution
+  Board activeBoard = mockBoard; //temporary solution as well
   late Node mockGoal = activeBoard.addGoal('mockGoal');
   late Node mockStep = activeBoard.addStepByAim('Mock Step', mockGoal);
   bool isTitleClicked = false;
+  late Function updateActiveBord = () {
+    setState(() {});
+  };
   late Function changeTitleMode = () {
     setState(() {
       isTitleClicked = !isTitleClicked;
-    });
-  };
-  late Function changeActiveBoardTitle = (String value) {
-    setState(() {
-      activeBoard.title = value;
     });
   };
 
@@ -69,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
             board: activeBoard,
             isInEditingMode: isTitleClicked,
             changeModeCallback: changeTitleMode,
-            changeActiveBoardTitleCallback: changeActiveBoardTitle,
+            setHomePageStateCallback: updateActiveBord,
           )),
       body: Center(
         child: Column(
@@ -98,20 +96,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class ResponsiveTitle extends StatelessWidget {
   final Board board;
-  bool isInEditingMode;
+  final bool isInEditingMode;
   final Function changeModeCallback;
-  final Function changeActiveBoardTitleCallback;
+  final Function setHomePageStateCallback;//TODO: replace by update Active board callback
   ResponsiveTitle(
       {Key? key,
       required this.board,
       required this.isInEditingMode,
       required this.changeModeCallback,
-      required this.changeActiveBoardTitleCallback})
+      required this.setHomePageStateCallback})
       : super(key: key);
-  late TextEditingController controller =
+  late final TextEditingController controller =
       TextEditingController(text: board.title);
 
-  @override
   Widget build(BuildContext context) {
     if (isInEditingMode) {
       return TextField(
@@ -119,7 +116,8 @@ class ResponsiveTitle extends StatelessWidget {
         autofocus: true,
         autocorrect: false,
         onSubmitted: (value) {
-          changeActiveBoardTitleCallback(value);
+          board.title=value;
+          setHomePageStateCallback();//technicly the is no reason for this callback. But I don't want the program to crash becose the next callback was moved 
           changeModeCallback();
         },
       );
