@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.map),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("placeholder for a feature (map)")));
+                    SnackBar(content: Text("placeholder for a feature (map graph)")));
               },
             )
           ],
