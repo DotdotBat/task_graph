@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Board> boards = [mockBoard];//temporary solution
   Board activeBoard = mockBoard; //temporary solution as well
   late Node mockGoal = activeBoard.addGoal('mockGoal');
-  late Node mockStep = activeBoard.addStepByAim('Mock Step', mockGoal);
+  late Node mockStep;
   bool isTitleClicked = false;
   late Function updateActiveBord = () {
     setState(() {});
@@ -42,6 +42,13 @@ class _MyHomePageState extends State<MyHomePage> {
       isTitleClicked = !isTitleClicked;
     });
   };
+
+  @override
+  void initState() {//done to initialise the structure. temporary solution
+  Node mockStep = activeBoard.addStepByAim('Mock Step', mockGoal);
+    super.initState();
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -69,20 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
             changeModeCallback: changeTitleMode,
             setHomePageStateCallback: updateActiveBord,
           )),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'The active board:',
-            ),
-            Text(
-              '${activeBoard.title} , ${mockStep.title}',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ],
-        ),
-      ),
+       body: UnlockedList(activeBoard),
+       //Center(//TODO: core mechanics time!
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: <Widget>[
+      //       Text(
+      //         'The active board:',
+      //       ),
+      //       Text(
+      //         '${activeBoard.title} , ${mockStep.title}',
+      //         style: Theme.of(context).textTheme.headline6,
+      //       ),
+      //     ],
+      //   ),
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           openNodePage(context, mockStep);
@@ -98,7 +106,7 @@ class ResponsiveTitle extends StatelessWidget {
   final Board board;
   final bool isInEditingMode;
   final Function changeModeCallback;
-  final Function setHomePageStateCallback;//TODO: replace by update Active board callback
+  final Function setHomePageStateCallback;
   ResponsiveTitle(
       {Key? key,
       required this.board,
@@ -170,5 +178,26 @@ class NodePage extends StatelessWidget {
         ],
       ),
     ));
+  }
+}
+
+class UnlockedList extends StatelessWidget {
+  final Board board;
+  UnlockedList(this.board,
+  {Key? key}):super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Node> unlocked = board.unlocked();
+    return ListView.builder(itemCount: unlocked.length,
+    itemBuilder: (BuildContext context,int index){
+      return Dismissible(
+        key:ValueKey<int>(unlocked[index].id),
+        child: ListTile(title: Text(unlocked[index].title),
+        ),
+        background: Container(color: Colors.red,),
+        secondaryBackground: Container(color: Colors.green,),
+        );
+    },);
   }
 }
