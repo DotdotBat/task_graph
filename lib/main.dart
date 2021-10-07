@@ -34,7 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
   late Node mockGoal = activeBoard.addGoal('mockGoal');
   late Node mockStep;
   bool isTitleClicked = false;
-  late Function updateActiveBord = () {
+  late Function updateAppState = ({Board? newActiveBoard, bool? newIsTitleClicked, bool simplyChangeTheTitleMode: false,}) {
+    setState(() {
+      activeBoard = newActiveBoard ?? activeBoard;
+      if (newIsTitleClicked != null) {
+        isTitleClicked = !isTitleClicked;
+      } else {
+        isTitleClicked = newIsTitleClicked ?? isTitleClicked;
+      }
+
+    });
+  };
+  late Function updateActiveBoard = () {
     setState(() {});
   };
   late Function changeTitleMode = () {
@@ -42,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
       isTitleClicked = !isTitleClicked;
     });
   };
+
 
   @override
   void initState() {//done to initialise the structure. temporary solution
@@ -74,9 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
             board: activeBoard,
             isInEditingMode: isTitleClicked,
             changeModeCallback: changeTitleMode,
-            setHomePageStateCallback: updateActiveBord,
+            setHomePageStateCallback: updateActiveBoard,
           )),
-       body: UnlockedList(activeBoard),
+       body: UnlockedList(activeBoard, updateAppState: updateAppState,),
        //Center(//TODO: core mechanics time!
       //   child: Column(
       //     mainAxisAlignment: MainAxisAlignment.center,
@@ -183,8 +195,11 @@ class NodePage extends StatelessWidget {
 
 class UnlockedList extends StatelessWidget {
   final Board board;
+  final Function updateAppState;
   UnlockedList(this.board,
-  {Key? key}):super(key: key);
+  
+  {Key? key,
+  required this.updateAppState,}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +212,18 @@ class UnlockedList extends StatelessWidget {
         ),
         background: Container(color: Colors.red,),
         secondaryBackground: Container(color: Colors.green,),
+        onDismissed: (DismissDirection direction){if (direction == DismissDirection.endToStart) {
+          taskClearedHandler(unlocked[index]);
+        } else {
+        }},
         );
     },);
   }
+//{Board? newActiveBoard, bool? newIsTitleClicked, bool simplyChangeTheTitleMode: false,}
+  void taskClearedHandler(Node clearedNode) {
+    board.clearNode(clearedNode);
+    updateAppState(newActiveBoard:board);
+
+  }
 }
+
