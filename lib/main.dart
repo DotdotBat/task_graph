@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Function updateAppState = ({Board? newActiveBoard, bool? newIsTitleClicked, bool simplyChangeTheTitleMode: false,}) {
     setState(() {
       activeBoard = newActiveBoard ?? activeBoard;
-      if (newIsTitleClicked != null) {
+      if (simplyChangeTheTitleMode) {
         isTitleClicked = !isTitleClicked;
       } else {
         isTitleClicked = newIsTitleClicked ?? isTitleClicked;
@@ -85,8 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: ResponsiveTitle(
             board: activeBoard,
             isInEditingMode: isTitleClicked,
-            changeModeCallback: changeTitleMode,
-            setHomePageStateCallback: updateActiveBoard,
+            updateAppStateCallback: updateAppState,
           )),
        body: UnlockedList(activeBoard, updateAppState: updateAppState,),
        //Center(//TODO: core mechanics time!
@@ -117,14 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
 class ResponsiveTitle extends StatelessWidget {
   final Board board;
   final bool isInEditingMode;
-  final Function changeModeCallback;
-  final Function setHomePageStateCallback;
+  final Function updateAppStateCallback;
   ResponsiveTitle(
       {Key? key,
       required this.board,
       required this.isInEditingMode,
-      required this.changeModeCallback,
-      required this.setHomePageStateCallback})
+      required this.updateAppStateCallback,})
       : super(key: key);
   late final TextEditingController controller =
       TextEditingController(text: board.title);
@@ -137,15 +134,17 @@ class ResponsiveTitle extends StatelessWidget {
         autocorrect: false,
         onSubmitted: (value) {
           board.title=value;
-          setHomePageStateCallback();//technicly the is no reason for this callback. But I don't want the program to crash becose the next callback was moved 
-          changeModeCallback();
+          updateAppStateCallback(newActiveBoard:board, simplyChangeTheTitleMode: true);
         },
+        showCursor: true,
+        enableSuggestions: false,
+        
       );
     }
     return GestureDetector(
       child: Text(board.title),
       onTap: () {
-        changeModeCallback();
+        updateAppStateCallback(simplyChangeTheTitleMode:true);
       },
     );
   }
