@@ -29,12 +29,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Board> boards = [mockBoard];//temporary solution
+  List<Board> boards = [mockBoard]; //temporary solution
   Board activeBoard = mockBoard; //temporary solution as well
   late Node mockGoal = activeBoard.addGoal('mockGoal');
   late Node mockStep;
   bool isTitleClicked = false;
-  late Function updateAppState = ({Board? newActiveBoard, bool? newIsTitleClicked, bool simplyChangeTheTitleMode: false,}) {
+  late Function updateAppState = ({
+    Board? newActiveBoard,
+    bool? newIsTitleClicked,
+    bool simplyChangeTheTitleMode: false,
+  }) {
     setState(() {
       activeBoard = newActiveBoard ?? activeBoard;
       if (simplyChangeTheTitleMode) {
@@ -42,25 +46,15 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         isTitleClicked = newIsTitleClicked ?? isTitleClicked;
       }
-
     });
   };
-  late Function updateActiveBoard = () {
-    setState(() {});
-  };
-  late Function changeTitleMode = () {
-    setState(() {
-      isTitleClicked = !isTitleClicked;
-    });
-  };
-
 
   @override
-  void initState() {//done to initialise the structure. temporary solution
-  Node mockStep = activeBoard.addStepByAim('Mock Step', mockGoal);
+  void initState() {
+    //done to initialise the structure. temporary solution
+    Node mockStep = activeBoard.addStepByAim('Mock Step', mockGoal);
     super.initState();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(
               icon: Icon(Icons.map),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("placeholder for a feature (map graph)")));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("placeholder for a feature (map graph)")));
               },
             )
           ],
@@ -87,21 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
             isInEditingMode: isTitleClicked,
             updateAppStateCallback: updateAppState,
           )),
-       body: UnlockedList(activeBoard, updateAppState: updateAppState,),
-       //Center(//TODO: core mechanics time!
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Text(
-      //         'The active board:',
-      //       ),
-      //       Text(
-      //         '${activeBoard.title} , ${mockStep.title}',
-      //         style: Theme.of(context).textTheme.headline6,
-      //       ),
-      //     ],
-      //   ),
-      // ),
+      body: UnlockedList(
+        activeBoard,
+        updateAppState: updateAppState,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           openNodePage(context, mockStep);
@@ -117,12 +100,12 @@ class ResponsiveTitle extends StatelessWidget {
   final Board board;
   final bool isInEditingMode;
   final Function updateAppStateCallback;
-  ResponsiveTitle(
-      {Key? key,
-      required this.board,
-      required this.isInEditingMode,
-      required this.updateAppStateCallback,})
-      : super(key: key);
+  ResponsiveTitle({
+    Key? key,
+    required this.board,
+    required this.isInEditingMode,
+    required this.updateAppStateCallback,
+  }) : super(key: key);
   late final TextEditingController controller =
       TextEditingController(text: board.title);
 
@@ -133,18 +116,18 @@ class ResponsiveTitle extends StatelessWidget {
         autofocus: true,
         autocorrect: false,
         onSubmitted: (value) {
-          board.title=value;
-          updateAppStateCallback(newActiveBoard:board, simplyChangeTheTitleMode: true);
+          board.title = value;
+          updateAppStateCallback(
+              newActiveBoard: board, simplyChangeTheTitleMode: true);
         },
         showCursor: true,
         enableSuggestions: false,
-        
       );
     }
     return GestureDetector(
       child: Text(board.title),
       onTap: () {
-        updateAppStateCallback(simplyChangeTheTitleMode:true);
+        updateAppStateCallback(simplyChangeTheTitleMode: true);
       },
     );
   }
@@ -195,34 +178,42 @@ class NodePage extends StatelessWidget {
 class UnlockedList extends StatelessWidget {
   final Board board;
   final Function updateAppState;
-  UnlockedList(this.board,
-  
-  {Key? key,
-  required this.updateAppState,}):super(key: key);
+  UnlockedList(
+    this.board, {
+    Key? key,
+    required this.updateAppState,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<Node> unlocked = board.unlocked();
-    return ListView.builder(itemCount: unlocked.length,
-    itemBuilder: (BuildContext context,int index){
-      return Dismissible(
-        key:ValueKey<int>(unlocked[index].id),
-        child: ListTile(title: Text(unlocked[index].title),
-        ),
-        background: Container(color: Colors.red,),
-        secondaryBackground: Container(color: Colors.green,),
-        onDismissed: (DismissDirection direction){if (direction == DismissDirection.endToStart) {
-          taskClearedHandler(unlocked[index]);
-        } else {
-        }},
+    return ListView.builder(
+      itemCount: unlocked.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Dismissible(
+          key: ValueKey<int>(unlocked[index].id),
+          child: ListTile(
+            title: Text(unlocked[index].title),
+          ),
+          background: Container(
+            color: Colors.red,
+          ),
+          secondaryBackground: Container(
+            color: Colors.green,
+          ),
+          onDismissed: (DismissDirection direction) {
+            if (direction == DismissDirection.endToStart) {
+              taskClearedHandler(unlocked[index]);
+            } else {}
+          },
         );
-    },);
+      },
+    );
   }
+
 //{Board? newActiveBoard, bool? newIsTitleClicked, bool simplyChangeTheTitleMode: false,}
   void taskClearedHandler(Node clearedNode) {
     board.clearNode(clearedNode);
-    updateAppState(newActiveBoard:board);
-
+    updateAppState(newActiveBoard: board);
   }
 }
-
