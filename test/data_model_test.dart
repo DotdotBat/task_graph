@@ -1,7 +1,9 @@
 import 'package:task_graph/data_model.dart';
 import 'package:test/test.dart';
 main(){
+  
   group('init ', () {
+
     test('create board', (){
       String boardTitle = 'TaskGraph App';
   Board board = Board(boardTitle);
@@ -10,8 +12,24 @@ main(){
     });
     
   });
-    
+
+   group('goal behavior', (){//TODO: before modifing data model transfer tests
+
+   });
+  group('step behavior', (){
+
+   });
+
+
+group('cycle detection', (){
+
+   });
+
+group('something else', (){
+
+   });
 }
+
 
 /*
   String boardTitle = 'TaskGraph App';

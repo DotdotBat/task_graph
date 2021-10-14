@@ -1,5 +1,6 @@
 import 'dart:collection' show Queue;
 //never let there be a loop
+//TODO: create a function to show all ultimate goals of a task
 class Board {
   int allTimeNodeCount = 0;
   String title = 'unnamed board';
@@ -171,7 +172,7 @@ class Board {
   }
 }
 
-abstract class Node {
+abstract class Node {//TODO: this abstract class is redundant 
   int id;
   String title;
   String description = 'Description';
@@ -179,7 +180,7 @@ abstract class Node {
   Set<Node> prerequisites = {};
   Node(this.id, this.title);
   @override
-  String toString() {//this is unusable for json
+  String toString() {//TODO: json
     String result = '';
     if (this.runtimeType == Goal) {
       result = result + 'Goal: ';
