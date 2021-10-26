@@ -1,46 +1,70 @@
 import 'package:task_graph/data_model.dart';
 import 'package:test/test.dart';
-main(){
-  
-  group('init ', () {
 
-    test('create board', (){
+main() {
+  group('init ', () {
+    test('create board', () {
       String boardTitle = 'TaskGraph App';
-  Board board = Board(boardTitle);
-  expect(board.title, boardTitle);
-  expect(board.allTimeNodeCount, 0);
+      Board board = Board(boardTitle);
+      expect(board.title, boardTitle);
+      expect(board.allTimeNodeCount, 0);
+    });
+  });
+
+  group('goal behavior', () {
+    //TODO: before modifing data model transfer tests
+    late String boardTitle;
+    late Board board;
+    
+    
+    setUp(() {
+      boardTitle = 'TaskGraph App';
+      board = Board(boardTitle);
+    });
+
+    test('addGoal returns the node', (){
+      var goal = board.addGoal('goal');
+      expect(goal.runtimeType, Goal);
+    });
+    
+
+    test('goal title', (){
+      String goalTitle = 'Build an graph To-Do app';
+      Node goal = board.addGoal(goalTitle);
+      expect(goal.title, goalTitle);
+    });
+
+    test('allTimeNodeCount is increased', (){
+      board.addGoal('title');
+      expect(board.allTimeNodeCount, 1); 
+    });
+    test('first goal has id 1', (){
+      String goalTitle = 'Build an graph To-Do app';
+      
+      int firstGoalId = 1;
+      Node goal = board.addGoal(goalTitle);
+      expect(goal.id, firstGoalId);
     });
     
   });
+  group('step behavior', () {});
 
-   group('goal behavior', (){//TODO: before modifing data model transfer tests
+  group('cycle detection', () {});
 
-   });
-  group('step behavior', (){
-
-   });
-
-
-group('cycle detection', (){
-
-   });
-
-group('something else', (){
-
-   });
+  group('something else', () {});
 }
 
 
 /*
   String boardTitle = 'TaskGraph App';
   Board board = Board(boardTitle);
-  ass(board.title == boardTitle, 'first board is created');
-  ass(board.AllTimeNodeCount == 0, 'nodecount starts from 0');
+  +ass(board.title == boardTitle, 'first board is created');
+  +ass(board.AllTimeNodeCount == 0, 'nodecount starts from 0');
   String goalTitle = 'Build an graph To-Do app';
 
   int firstGoalId = 1;
   Node goal = board.addGoal(goalTitle);
-  ass(goal.runtimeType == Goal, 'add goal returns id');
+  ass(goal.runtimeType == Goal, 'add goal returns the node');
   ass(board.AllTimeNodeCount == 1, 'nodecount went up after adding goal');
 
   ass(goal.title == goalTitle, 'the name of the retrived goal did not change');
